@@ -1,6 +1,9 @@
 # User API Implementation
-## How to run the project
-## Project dependencies
-## Project overview
-### API Endpoints
-### Testing
+### Project overview
+- #### API Endpoints
+    - **GET** ``/api/users``
+    - **POST**``/api/users``
+    - **PUT**``/api/users/:userId``
+    - **PUT**``/api/users/:userId``
+- #### Testing
+### Project tools and libraries

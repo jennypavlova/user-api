@@ -2,6 +2,7 @@ const express = require('express');
 const app = express(); // define the app using express
 const bodyParser = require('body-parser');
 
+const UserMap = new Map()
 
 app.use(bodyParser.urlencoded({
     extended: true
@@ -21,20 +22,62 @@ router.get('/', (req, res) => {
     });
 });
 router.get('/users', (req, res) =>{
-    return res.send('Received a GET HTTP method');
+    console.log('Before GET ')
+     console.log(UserMap)
+    const users = Array.from(UserMap.values());
+
+    console.log(users)
+    res.status(200).send(JSON.stringify(users))
 })
 router.get('/users/:userId', (req, res) => {
-    return res.send(users[req.params.userId]);
+    const User = UserMap.get(req.params.userId)
+    if (!User) {
+        return res.status(404).send('User with id ' + req.params.userId + ' not found')
+    } else {
+        return res.status(200).send(JSON.stringify(User))
+    }
 });
 router.post('/users', (req, res) => {
-    return res.send('Received a POST HTTP method');
+    if (!req.body.email) {
+        return res.status(400).send('User Email is missing');
+    }
+
+    const User = {
+        id: Math.random().toString(36).substr(2, 9),
+        email: req.body.email,
+        givenName: req.body.givenName,
+        familyName: req.body.familyName,
+        created: Date.now()
+    }
+
+    UserMap.set(User.id, User)
+    console.log(UserMap)
+
+    //return res.send('Received a POST HTTP method ', JSON.stringify(User))
+    return res.status(200).send(User);
 });
 router.put('/users/:userId', (req, res) => {
-    return res.send(
-        `PUT HTTP method on user/${req.params.userId} resource`,
-    );
+    if (!req.body.email || !req.body.familyName || !req.body.givenName) {
+        return res.status(400).send("Please validate your data");
+    }
+    let UsertoUpdate = UserMap.get(req.params.userId)
+    if (!UsertoUpdate) {
+        return res.status(400).send("User with id" + req.params.userId + " is not existing");
+    }
+    UsertoUpdate = {
+        ...UsertoUpdate,
+        id: req.params.userId,
+        email: req.body.email,
+        givenName: req.body.givenName,
+        familyName: req.body.familyName,
+    }
+    UserMap.set(req.params.userId, UsertoUpdate)
+    console.log(UserMap)
+   res.status(200).send(UserMap);
 });
 router.delete('/users/:userId', (req, res) => {
+    UserMap.delete(req.params.userId)
+    console.log(UserMap)
     return res.send(
         `DELETE HTTP method on user/${req.params.userId} resource`,
     );
