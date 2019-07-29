@@ -95,8 +95,8 @@ describe('/PUT users', () => {
                 if (err) {
                     console.log('Error status: ', err.status)
                 }
-                res.should.have.status(200);
-                res.body.should.be.an('object');
+                res.should.have.status(200)
+                res.body.should.be.an('object')
                 res.body.should.include({
                     email: 'test1234@test.com'
                 })
@@ -127,7 +127,7 @@ describe('/DELETE user by id', () => {
                 if (err) {
                     console.log('Error status: ', err.status)
                 }
-                res.should.have.status(200);
+                res.should.have.status(200)
                 done()
             })
     })
