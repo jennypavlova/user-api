@@ -2,7 +2,8 @@ module.exports = {
   env: {
     browser: true,
     commonjs: true,
-    es6: true
+    es6: true,
+    mocha: true
   },
   extends: [
     'standard'
@@ -15,6 +16,7 @@ module.exports = {
     ecmaVersion: 2018
   },
   rules: {
-    "indent": ["error", 4]
+    "indent": ["error", 4],
+    "prefer-template": "error"
   }
 }

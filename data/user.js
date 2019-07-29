@@ -13,7 +13,6 @@ const createDummyUsers = (userMap) => {
         familyName: 'Smith',
         created: 1564355589220
     })
-    console.log(userMap)
 }
 
 module.exports = createDummyUsers
