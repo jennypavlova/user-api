@@ -1,8 +1,10 @@
 const express = require('express');
 const app = express(); // define the app using express
 const bodyParser = require('body-parser');
+const createDummyUsers = require('./data/user');
 
 const UserMap = new Map()
+createDummyUsers(UserMap);
 
 app.use(bodyParser.urlencoded({
     extended: true
@@ -23,11 +25,11 @@ router.get('/', (req, res) => {
 });
 router.get('/users', (req, res) =>{
     console.log('Before GET ')
-     console.log(UserMap)
+    console.log(UserMap)
     const users = Array.from(UserMap.values());
 
     console.log(users)
-    res.status(200).send(JSON.stringify(users))
+    res.status(200).send(users)
 })
 router.get('/users/:userId', (req, res) => {
     const User = UserMap.get(req.params.userId)
@@ -73,19 +75,26 @@ router.put('/users/:userId', (req, res) => {
     }
     UserMap.set(req.params.userId, UsertoUpdate)
     console.log(UserMap)
-   res.status(200).send(UserMap);
+   res.status(200).send(UserMap.get(req.params.userId));
 });
 router.delete('/users/:userId', (req, res) => {
-    UserMap.delete(req.params.userId)
-    console.log(UserMap)
-    return res.send(
-        `DELETE HTTP method on user/${req.params.userId} resource`,
-    );
-});
+    const User = UserMap.get(req.params.userId)
+    if (!User) {
+        return res.status(404).send('User with id ' + req.params.userId + ' not found')
+    } else {
+        UserMap.delete(req.params.userId)
+        console.log(UserMap)
+        return res.status(200).send(
+            `DELETE HTTP method on user/${req.params.userId} resource`,
+        );
+    }
 
+});
 
 app.use('/api', router);
 
 // START THE SERVER
 app.listen(port);
 console.log('Server is running on port ' + port);
+
+module.exports = app
