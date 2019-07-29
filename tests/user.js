@@ -17,7 +17,7 @@ describe('/GET user', () => {
             .get('/api/users')
             .end((err, res) => {
                 if (err) {
-                    console.log('Error status: ', err.status)
+                    console.log(`Error status:${err.status}`)
                 }
                 res.should.have.status(200)
                 done()
@@ -28,7 +28,7 @@ describe('/GET user', () => {
             .get('/api/users')
             .end((err, res) => {
                 if (err) {
-                    console.log('Error status: ', err.status)
+                    console.log(`Error status:${err.status}`)
                 }
                 res.body.should.be.a('array')
                 res.body.length.should.not.be.eql(0)
@@ -43,7 +43,7 @@ describe('/GET user with id', () => {
             .get('/api/users/1')
             .end((err, res) => {
                 if (err) {
-                    console.log('Error status: ', err.status)
+                    console.log(`Error status:${err.status}`)
                 }
                 res.should.have.status(404)
                 done()
@@ -54,7 +54,7 @@ describe('/GET user with id', () => {
             .get('/api/users/id1')
             .end((err, res) => {
                 if (err) {
-                    console.log('Error status: ', err.status)
+                    console.log(`Error status:${err.status}`)
                 }
                 res.should.have.status(200)
                 res.body.should.be.an('object')
@@ -74,7 +74,7 @@ describe('/POST users', () => {
             })
             .end(function (err, res) {
                 if (err) {
-                    console.log('Error status: ', err.status)
+                    console.log(`Error status:${err.status}`)
                 }
                 res.should.have.status(200)
                 res.body.should.be.an('object')
@@ -93,7 +93,7 @@ describe('/PUT users', () => {
             })
             .end(function (err, res) {
                 if (err) {
-                    console.log('Error status: ', err.status)
+                    console.log(`Error status:${err.status}`)
                 }
                 res.should.have.status(200)
                 res.body.should.be.an('object')
@@ -112,7 +112,7 @@ describe('/PUT users', () => {
             })
             .end(function (err, res) {
                 if (err) {
-                    console.log('Error status: ', err.status)
+                    console.log(`Error status:${err.status}`)
                 }
                 res.should.have.status(400)
                 done()
@@ -125,7 +125,7 @@ describe('/DELETE user by id', () => {
             .delete('/api/users/id1')
             .end(function (err, res) {
                 if (err) {
-                    console.log('Error status: ', err.status)
+                    console.log(`Error status:${err.status}`)
                 }
                 res.should.have.status(200)
                 done()
@@ -136,7 +136,7 @@ describe('/DELETE user by id', () => {
             .delete('/api/users/id5')
             .end(function (err, res) {
                 if (err) {
-                    console.log('Error status: ', err.status)
+                    console.log(`Error status:${err.status}`)
                 }
                 res.should.have.status(404)
                 done()
