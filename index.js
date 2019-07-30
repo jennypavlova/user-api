@@ -2,6 +2,19 @@ const express = require('express')
 const app = express() // define the app using express
 const bodyParser = require('body-parser')
 const createDummyUsers = require('./data/user')
+const mongoose = require('mongoose')
+const dbConfig = require('./config/database.conf.js')
+const User = require('./models/user.js')
+
+mongoose.connect(dbConfig.url[app.settings.env], {
+    useNewUrlParser: true,
+    useCreateIndex: true
+}).then(() => {
+    console.log('Successfully connected to the database')
+}).catch(err => {
+    console.log(`Could not connect to the database. Exiting now... ${err}`)
+    process.exit()
+})
 
 const UserMap = new Map()
 createDummyUsers(UserMap)
@@ -22,68 +35,53 @@ router.get('/', (req, res) => {
         message: 'Welcome to user api!'
     })
 })
-router.get('/users', (req, res) => {
-    // console.log(UserMap)
-    const users = Array.from(UserMap.values())
-
-    // console.log(users)
-    res.status(200).send(users)
-})
-router.get('/users/:userId', (req, res) => {
-    const User = UserMap.get(req.params.userId)
-    if (!User) {
-        return res.status(404).send(`User with id ${req.params.userId} not found`)
-    } else {
-        return res.status(200).send(JSON.stringify(User))
+router.get('/users', async (req, res) => {
+    try {
+        const result = await User.find().exec()
+        res.send(result)
+    } catch (error) {
+        res.status(500).send(error)
     }
 })
-router.post('/users', (req, res) => {
-    if (!req.body.email) {
-        return res.status(400).send('User Email is missing')
+router.get('/users/:userId', async (req, res) => {
+    try {
+        const result = await User.findById(req.params.userId).exec()
+        if (!result) {
+            return res.status(404).send(`User with id ${req.params.userId} not found`)
+        }
+        res.send(result)
+    } catch (error) {
+        res.status(500).send(error)
     }
-
-    const User = {
-        id: Math.random().toString(36).substr(2, 9),
-        email: req.body.email,
-        givenName: req.body.givenName,
-        familyName: req.body.familyName,
-        created: Date.now()
-    }
-
-    UserMap.set(User.id, User)
-    // console.log(UserMap)
-
-    return res.status(200).send(User)
 })
-router.put('/users/:userId', (req, res) => {
-    if (!req.body.email || !req.body.familyName || !req.body.givenName) {
-        return res.status(400).send('Please validate your data')
+router.post('/users', async (req, res) => {
+    try {
+        const user = new User(req.body)
+        const result = await user.save()
+        res.send(result)
+    } catch (error) {
+        res.status(500).send(error)
     }
-    let UsertoUpdate = UserMap.get(req.params.userId)
-    if (!UsertoUpdate) {
-        return res.status(400).send(`User with id ${req.params.userId} is not existing`)
-    }
-    UsertoUpdate = {
-        ...UsertoUpdate,
-        id: req.params.userId,
-        email: req.body.email,
-        givenName: req.body.givenName,
-        familyName: req.body.familyName
-    }
-    UserMap.set(req.params.userId, UsertoUpdate)
-    // console.log(UserMap)
-    res.status(200).send(UserMap.get(req.params.userId))
 })
-router.delete('/users/:userId', (req, res) => {
-    const User = UserMap.get(req.params.userId)
-    if (!User) {
-        return res.status(404).send(`User with id ${req.params.userId} not found`)
-    } else {
-        UserMap.delete(req.params.userId)
-        // console.log(UserMap)
-        return res.status(200).send(
-            `User with ${req.params.userId} is deleted`
-        )
+router.put('/users/:userId', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.userId).exec()
+        user.set(req.body)
+        var result = await user.save()
+        res.send(result)
+    } catch (error) {
+        console.log(error)
+        res.status(500).send(error)
+    }
+})
+router.delete('/users/:userId', async (req, res) => {
+    try {
+        var result = await User.deleteOne({
+            _id: req.params.userId
+        }).exec()
+        res.send(result)
+    } catch (error) {
+        res.status(500).send(error)
     }
 })
 

@@ -5,14 +5,32 @@ process.env.NODE_ENV = 'test'
 const chai = require('chai')
 const chaiHttp = require('chai-http')
 const server = require('../index')
+const User = require('../models/user')
 
 chai.use(chaiHttp)
 chai.should()
 /*
 * Test the /GET route
 */
-describe('/GET user', () => {
-    it('passes with status 200', (done) => {
+describe('Test CRUD operations user', () => {
+    // User.collection.drop()
+    beforeEach(done => {
+        var newUser = new User({
+            _id: '5d4078355574df67b9467666',
+            email: 'john@test.com',
+            givenName: 'John',
+            familyName: 'Smith'
+        })
+        newUser.save(err => {
+            if (err) console.log(err)
+            done()
+        })
+    })
+    afterEach(function (done) {
+        User.collection.drop()
+        done()
+    })
+    it('GET api/users : passes with status 200', (done) => {
         chai.request(server)
             .get('/api/users')
             .end((err, res) => {
@@ -23,7 +41,7 @@ describe('/GET user', () => {
                 done()
             })
     })
-    it('it should GET all the users', (done) => {
+    it('GET api/users : it should GET all the users', (done) => {
         chai.request(server)
             .get('/api/users')
             .end((err, res) => {
@@ -36,11 +54,10 @@ describe('/GET user', () => {
                 done()
             })
     })
-})
-describe('/GET user with id', () => {
-    it('it should not get a not existing user and returns status 404', function (done) {
+
+    it('GET api/users : it should not get a not existing user and returns status 404', (done) => {
         chai.request(server)
-            .get('/api/users/1')
+            .get('/api/users/5d4078355574df67b9467636')
             .end((err, res) => {
                 if (err) {
                     console.log(`Error status:${err.status}`)
@@ -49,9 +66,9 @@ describe('/GET user with id', () => {
                 done()
             })
     })
-    it('it should get a single user', function (done) {
+    it('GET api/users/userID : it should get a single user', (done) => {
         chai.request(server)
-            .get('/api/users/id1')
+            .get('/api/users/5d4078355574df67b9467666')
             .end((err, res) => {
                 if (err) {
                     console.log(`Error status:${err.status}`)
@@ -61,18 +78,16 @@ describe('/GET user with id', () => {
                 done()
             })
     })
-})
 
-describe('/POST users', () => {
-    it('it should create new user', function (done) {
+    it('POST api/users sit should create new user', (done) => {
         chai.request(server)
             .post('/api/users')
             .send({
-                email: 'test@test.com',
+                email: 'test123@test.com',
                 givenName: 'Anna',
                 familyName: 'Smith'
             })
-            .end(function (err, res) {
+            .end((err, res) => {
                 if (err) {
                     console.log(`Error status:${err.status}`)
                 }
@@ -81,64 +96,36 @@ describe('/POST users', () => {
                 done()
             })
     })
-})
-describe('/PUT users', () => {
-    it('it should update existing user', function (done) {
+
+    it('PUT api/users/:userId it should update existing user', (done) => {
         chai.request(server)
-            .put('/api/users/id1')
+            .put('/api/users/5d4078355574df67b9467666')
             .send({
-                email: 'test1234@test.com',
-                givenName: 'Anna',
+                email: 'test2@test.com',
+                givenName: 'John',
                 familyName: 'Smith'
             })
-            .end(function (err, res) {
+            .end((err, res) => {
                 if (err) {
                     console.log(`Error status:${err.status}`)
                 }
                 res.should.have.status(200)
                 res.body.should.be.an('object')
                 res.body.should.include({
-                    email: 'test1234@test.com'
+                    email: 'test2@test.com'
                 })
                 done()
             })
     })
-    it('it should not update existing user with missing data in the request', function (done) {
+
+    it('DELETE api/users/:userId : it should delete existing user', (done) => {
         chai.request(server)
-            .put('/api/users/id1')
-            .send({
-                email: 'test1234@test.com',
-                familyName: 'Smith'
-            })
-            .end(function (err, res) {
-                if (err) {
-                    console.log(`Error status:${err.status}`)
-                }
-                res.should.have.status(400)
-                done()
-            })
-    })
-})
-describe('/DELETE user by id', () => {
-    it('it should delete existing user', function (done) {
-        chai.request(server)
-            .delete('/api/users/id1')
-            .end(function (err, res) {
+            .delete('/api/users/5d4078355574df67b9467666')
+            .end((err, res) => {
                 if (err) {
                     console.log(`Error status:${err.status}`)
                 }
                 res.should.have.status(200)
-                done()
-            })
-    })
-    it('it should not delete not existing user and returns 404', function (done) {
-        chai.request(server)
-            .delete('/api/users/id5')
-            .end(function (err, res) {
-                if (err) {
-                    console.log(`Error status:${err.status}`)
-                }
-                res.should.have.status(404)
                 done()
             })
     })
