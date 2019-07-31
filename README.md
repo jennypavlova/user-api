@@ -7,8 +7,9 @@
         - NPM >= 3.5.2
     - Run the project
         - ``npm run dev``
-            - _Note_: The port could be defined in environmental variable (_process.env.PORT_)
+            - _Note_: The port could be defined in the environmental variable (_process.env.PORT_)
 - #### API Endpoints
+    - ``GET /api/``
     - ``GET /api/users``
     - ``POST /api/users``
     - ``GET /api/users/:userId``
