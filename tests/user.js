@@ -30,7 +30,13 @@ describe('Test CRUD operations user', () => {
         User.collection.drop()
         done()
     })
-    it('POST api/users sit should create new user', async () => {
+    it('GET /api : it should GET the welcome message', async () => {
+        const res = await chai.request(server).get('/api')
+        res.should.have.status(200)
+        res.body.should.be.an('object')
+        res.body.should.have.property('message')
+    })
+    it('POST /api/users : it should create new user', async () => {
         const res = await chai.request(server).post('/api/users')
             .set('content-type', 'application/json')
             .send({
@@ -47,14 +53,14 @@ describe('Test CRUD operations user', () => {
         })
     })
 
-    it('GET api/users : it should GET all the users', async () => {
+    it('GET /api/users : it should GET all the users', async () => {
         const res = await chai.request(server).get('/api/users')
         res.should.have.status(200)
         res.body.should.be.an('array')
         res.body.length.should.not.be.eql(0)
         res.body[0].should.be.an('object')
     })
-    it('GET /api/users/:userId  it should get a single user', async () => {
+    it('GET /api/users/:userId : it should get a single user', async () => {
         const res = await chai.request(server).get(`/api/users/${_id}`)
         res.should.have.status(200)
         res.body.should.be.an('object')
@@ -64,9 +70,8 @@ describe('Test CRUD operations user', () => {
             givenName: 'John',
             familyName: 'Smith'
         })
-
     })
-    it('PUT api/users/:userId it should update existing user', async () => {
+    it('PUT /api/users/:userId : it should update existing user', async () => {
         const res = await chai.request(server).put(`/api/users/${_id}`)
             .send({
                 email: 'johnny@test.com',
@@ -82,7 +87,7 @@ describe('Test CRUD operations user', () => {
         })
     })
 
-    it('DELETE api/users/:userId : it should delete existing user', async () => {
+    it('DELETE /api/users/:userId : it should delete existing user', async () => {
         const res = await chai.request(server).delete(`/api/users/${_id}`)
         res.should.have.status(200)
     })
