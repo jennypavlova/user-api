@@ -22,8 +22,7 @@ describe('Test CRUD operations user', () => {
             familyName: 'Smith'
         })
         newUser.save(err => {
-            if (err) console.log(err)
-            console.log('user created')
+            if (err) return done(err)
             done()
         })
     })
@@ -59,18 +58,25 @@ describe('Test CRUD operations user', () => {
         const res = await chai.request(server).get(`/api/users/${_id}`)
         res.should.have.status(200)
         res.body.should.be.an('object')
+        res.body.should.include({
+            _id: _id,
+            email: 'john@test.com',
+            givenName: 'John',
+            familyName: 'Smith'
+        })
+
     })
     it('PUT api/users/:userId it should update existing user', async () => {
         const res = await chai.request(server).put(`/api/users/${_id}`)
             .send({
-                email: 'john@test.com',
+                email: 'johnny@test.com',
                 givenName: 'Johnny',
                 familyName: 'Junior'
             })
         res.should.have.status(200)
         res.body.should.be.an('object')
         res.body.should.include({
-            email: 'john@test.com',
+            email: 'johnny@test.com',
             givenName: 'Johnny',
             familyName: 'Junior'
         })

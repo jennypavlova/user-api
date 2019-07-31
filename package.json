@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js",
+    "dev": "nodemon NODE_ENV=development index.js",
     "test": "mocha --timeout 10000 tests/*.js --exit"
   },
   "author": "Jenny Pavlova <jennypavlova94@gmail.com>",
