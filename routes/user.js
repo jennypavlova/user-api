@@ -59,7 +59,7 @@ router.put('/users/:userId', asyncMiddleware(async (req, res) => {
         return res.status(400).send('Missing user information')
     }
     if (req.body.createdAt) {
-        return res.status(400).send('Created date can not be updated!')
+        return res.status(400).send('Created date can not be modified!')
     }
     user.set(req.body)
     const savedUser = await user.save()
